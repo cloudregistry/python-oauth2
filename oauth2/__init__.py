@@ -848,13 +848,9 @@ class Client2(object):
         response_args = Client2._split_url_string(content)
         return response_args
 
-    def request(self, base_uri, access_token=None, method='GET', body=None,
+    def request(self, uri, access_token=None, method='GET', body=None,
         headers=None, params=None, token_param='oauth_token'):
         """Make a request to the OAuth API"""
-
-        args = {}
-        args.update(params or {})
-        if access_token is not None and method == 'GET':
-            args[token_param] = access_token
-        uri = '%s?%s' % (base_uri, urllib.urlencode(args))
+        if access_token is not None and 'Authorization' not in headers:
+            headers['Authorization'] = "Bearer " + access_token
         return self.http.request(uri, method=method, body=body, headers=headers)
